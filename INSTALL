@@ -1,0 +1,22 @@
+Installing ogslb
+
+Requirements:
+python
+redis
+powerdns
+
+Install:
+Currently, ogslb has some hard coded paths that require it to live under /opt/ogslb.  
+
+Redis needs to be running on 'localhost'.
+
+Powerdns needs to be configured to use the ogslb backend.  Typically, ogslb will be configured to handle requests first in powerdns and if it doesn't have any matching data, the request will fall through to the next available backend such as bind style zone files.  Additionally, you will typically want to disable caching of dns records in powerdns to make sure you have the latest version of data from ogslb.
+
+Powerdns config (often /etc/pdns/pdns.conf):
+
+launch=pipe,bind			# launch the backends in order of the ogslb pipe, then the bind zone files
+pipe-command=/opt/ogslb/bin/backend.py	# where the ogslb backend lives
+negquery-cache-ttl=0			# disable negative caching
+query-cache-ttl=0 			# disable query caching
+
+
