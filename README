@@ -1,0 +1,19 @@
+Welcome to Open Global Server LoadBalancer!
+
+Open Global Server LoadBalancer (oGSLB) is a way to use dns to distribute requests to destinations while accounting for additional metrics about the destination.  Metrics can include such things as health, bandwidth and even arbitrary priorities associated with destinations.  The metrics data collected by oGSLB is feed into PowerDNS via a piped backend to be served to clients.
+
+Metrics:
+Metrics within oGSLB are collected via custom python modules used to collect data about a destination.  All such metrics have a default 10sec timeout on the test.  These modules live in the proto directory and are named after the kind of test they perform.  Metrics are stored in a redis database for use by the pdns backend process when filling dns requests.  Currently, the metrics oGSLB understands how to collect include:
+
+DUMMY		Allow for an arbitrary value to be forced.  No actual remote test is performed.
+HTTP		Http check including content matching of responses as well as simple status code tests.
+HTTPS		Https check including content matching of responses as well as simple status code tests.
+SMTP		Mail server check.
+TCP		Simple tcp port connection
+
+Priorities:
+oGSLB associates priorities with each of the collected metrics.  Priorities are user defined in the poller.xml configuration file.  Priorities allow for oGSLB to rank destinations to help make the best selection possible for a dns response to a client.
+
+Traffic Balancing:
+oGSLB uses the combination of metrics and thier associated priorities to rank destinations.  Each metric about a destination includes the priority of that metric.  When a dns request is being filled, the last 120seconds of metrics about the hostname is pulled from redis.  For each ip address that could be used for the given name, all of the priority numbers are added up.  Once each ip address has it's total priority number calculated, a random selection is made from the highest priority number.  That selection is the ip address returned to the client as the destination for the requested hostname.
+
