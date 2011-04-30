@@ -1,0 +1,139 @@
+#!/usr/bin/python
+import os, sys, glob, imp
+
+scriptPath = os.path.realpath(os.path.dirname(sys.argv[0]))
+
+# account for where we live
+sys.path.append(scriptPath + '/..')
+sys.path.append(scriptPath + '/../lib')
+sys.path.append(scriptPath + '/../proto')
+
+from background import *
+#createDaemon()
+
+import logging
+import logging.handlers
+import xml.dom.minidom
+import threading
+import Queue
+import random
+import time
+import signal
+import pprint
+import getopt
+
+import parsexml
+from Responder import *
+from Poller import *
+
+pp = pprint.PrettyPrinter(indent=4)
+
+# define how many threads of each type we should fire up
+maxPoller=10
+maxResponder=6
+
+
+# setup the different queues
+pollerQueue = Queue.Queue(0)
+responderQueue = Queue.Queue(0)
+
+def signal_handler(signal, frame):
+        print 'You pressed Ctrl+C!'
+        sys.exit(0)
+
+def watchThreads():
+   threadcount = len(threading.enumerate())
+   if threadcount < maxThreadsRunning:
+#      logger.debug("thread died: %s" % threadcount)
+      main_thread = threading.currentThread()
+      for t in threading.enumerate():
+         if t is main_thread:
+            continue
+#         pp.pprint("thread: %s" % t.getName())
+         logger.debug("thread: %s" % t.getName())
+         
+
+#def loadProto():
+#   fl = glob.glob('/opt/ogslb/proto/*.py')
+#   modulist = []
+#   adapters=[]
+#   for i in range(len(fl)):
+#       file = fl[i]
+##       print fl[i]
+#       fl[i] = fl[i].split('/')[4]
+#       if fl[i] != '__init__.py':
+##          print fl[i]
+#          fl[i] = fl[i][0:(len(fl[i])-3)]
+##          print fl[i]
+##          modulist.append(getattr(__import__(fl[i]),fl[i]))
+#          imp.load_source(fl[i], file)
+#          adapters.append(fl[i])
+##   pp.pprint(adapters)
+
+def usage():
+   print "usage"
+
+def main(argv):
+   signal.signal(signal.SIGINT, signal_handler)
+   logFile = '/var/log/ogslb.log'
+   configFile = '/opt/ogslb/etc/poller.xml'
+   debug = 0
+   try:
+      opts, args = getopt.getopt(argv, "hc:l:d", ['config=', 'help', 'log=', 'debug'])
+   except getopt.GetoptError:
+      usage()
+      sys.exit(2)
+
+   for opt, arg in opts:
+      if opt in ('-h', '--help'):
+         usage()
+         sys.exit()
+      elif opt == '-d':
+         debug = 1
+      elif opt in ('-l', '--log'):
+         logFile = arg
+      elif opt in ('-c', '--config'):
+         configFile = arg
+
+   # setup the logger
+   logger = logging.getLogger("ogslb")
+   logger.setLevel(logging.DEBUG)
+   ch = logging.handlers.RotatingFileHandler(logFile, maxBytes=25000000, backupCount=5)
+   ch.setLevel(logging.DEBUG)
+   formatter = logging.Formatter("%(created)f - %(name)s - %(levelname)s - %(message)s")
+   ch.setFormatter(formatter)
+   logger.addHandler(ch)
+
+   logger.debug('startup')
+
+   # parse the xml config and start looping pushing jobs into the queue
+   dbConfig, vips = parsexml.parseConfig(configFile);
+
+#   loadProto()
+
+   # setup the poller thread pool
+   for i in range(maxPoller):
+      Poller(pollerQueue, dbConfig, responderQueue, i).start() # start a worker
+
+   # setup the responder thread pool
+   for i in range(maxResponder):
+      Responder(responderQueue, dbConfig, i).start() # start a worker
+
+
+   # start looping pushing jobs into the queue
+   passCounter = 0
+   while(True):
+      for vip in vips:
+         for data in vips[vip]['data']:
+            pollerQueue.put((vip, data, passCounter))
+
+      passCounter = passCounter + 1
+
+      # we push jobs into the queue every 30 seconds
+      # this effectivly makes us do healtchecks every 30 seconds
+      time.sleep(30)
+
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<Poller>
+   <CONFIG 
+        dbhost="localhost" 
+        dbname="gslb" 
+        dbuser="gslb" 
+        dbpass="gslb" 
+        rrddir="/var/tmp/ogslb/rrd"
+        rrdpath="/usr/bin/rrdtool"
+        logfile="/var/log/ogslb.log"
+        errordir="/var/tmp/ogslb/errors"
+   /> 
+
+   <VIP name="www.google.com">
+      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.105" tag="homepage" priority="20"/>
+      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.147" tag="homepage" priority="20"/>
+      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.103" tag="homepage" priority="20"/>
+
+   </VIP>
+
+
+</Poller>
+
