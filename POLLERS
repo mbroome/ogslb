@@ -1,0 +1,52 @@
+In ogslb, pollers are the processes that perform each individual test.  Pollers collect the metrics about services being monitored.  oglsb has the ability to monitor multiple different metrics about the same destination.  A single destination can be checked for any number of urls taking into account the health of all of them to decide if the service is healthy enough to be put into production.
+
+Pollers are configured through /opt/ogslb/etc/poller.xml.  The current list of pollers are as follows:
+
+DUMMY           Allow for an arbitrary value to be forced.  No actual remote test is performed.
+HTTP            Http check including content matching of responses as well as simple status code tests.
+HTTPS           Https check including content matching of responses as well as simple status code tests.
+SMTP            Mail server check.
+TCP             Simple tcp port connection
+
+The required fields for the Poll entry vary depending on the type of poller.  At a minumum, all pollers require the foll
+owing fields:
+Type            The poller to use for this test
+ip              The ip address to associate the test with
+tag             A text string identifing the test
+priority        An arbitrary number associated with how important the test is
+
+Dummy Poll:
+The dummy poll is used to artificaly inflate the priority of an address without having to adjust priorities of existing pollers.  As an example, givin 2 addresses where both can be checked with http for '/index.html'but only one can be checked for '/test/url', it is possible to 'dummy' the '/test/url' poll for the second address to keep it's total priority even.
+
+This entry will always succeed and give an additional 10 priority to 1.2.3.4 on every pass:
+   <Poll Type="DUMMY" ip="1.2.3.4" tag="test" priority="10" />
+
+The dummy poll only requires the basic fields Type, ip, tag and priority.
+
+Http Poll:
+The http poll performs an http check on an address.  It has the ability to look through the returned content for a text string or simply require a successful status code.
+
+This entry will check the url '/' on 1.2.3.4 looking for 'alive' in the response.  If it doesn't exist, it will fail this test.
+   <Poll Type="HTTP" url="/" response="alive" ip="1.2.3.4" tag="homepage" priority="20"/>
+
+This entry will pull the image '/pics/blank.gif' from 1.2.3.4 but since we can't look for a specific text string in the image, we simply revert to requiring a successful http status.
+   <Poll Type="HTTP" url="/pics/blank.gif" ip="1.2.3.4" tag="origin" priority="20" />
+
+In addition to the required fields, the http poll requires the url. Optionally the response and port fields can be set.
+
+Https Poll:
+The https poll performes exactly like the http poll with the exception of making a ssl request.
+
+Smtp Poll:
+The smtp poll verifies a mail server is accepting connections.  When connecting, it issues a 'helo' and disconnects.
+
+This entry verifies the mail server at 1.2.3.4 is alive.
+   <Poll Type="SMTP" ip="1.2.3.4" priority="20" tag="mail" />
+
+The smtp poll requires the basic fields.
+
+TCP Poll:
+The tcp poll is effectivly a simple tcp port check.  The act of making the connection is the only thing that goes into verifiying the success of the test.
+
+In addition to the required fields, the tcp poll requires a port be set.
+
