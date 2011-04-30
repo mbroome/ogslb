@@ -50,3 +50,13 @@ The tcp poll is effectivly a simple tcp port check.  The act of making the conne
 
 In addition to the required fields, the tcp poll requires a port be set.
 
+Additional notes:
+It is possible to create a primary/secondary scenario with ogslb due to it's priority mechanism.  To do so, simply artifically increase the priority of the primary to be more than the secondary even if both services are considered healthy.
+
+   <VIP name="www.google.com">
+      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.105" tag="homepage" priority="80"/>
+      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.147" tag="homepage" priority="20"/>
+   </VIP>
+
+In the above example, even if both addesses are healthly, 74.125.113.105 will always be handed out until it dies for long enough to decrease it's priority below 74.125.113.147.  Due to pollers checking every 30 seconds and the powerdns backend looking at the last 120secs of data, it will take 74.125.113.105 being dead for the full 120sec before 74.125.113.147 is handed out.
+
