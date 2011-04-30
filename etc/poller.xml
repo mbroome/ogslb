@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <Poller>
+
+   <!-- this config block needs to be pulled out of here... -->
    <CONFIG 
         dbhost="localhost" 
         dbname="gslb" 
