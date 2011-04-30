@@ -19,4 +19,13 @@ pipe-command=/opt/ogslb/bin/backend.py	# where the ogslb backend lives
 negquery-cache-ttl=0			# disable negative caching
 query-cache-ttl=0 			# disable query caching
 
+Running:
+Once powerdns is configured, it will need to be restarted to pick up the new ogslb backend.
+
+Now, you will need to configure oglsb to tell it what to monitor.  Take a look at the POLLERS text file to understand how to configure etc/pollers.xml.
+
+Once etc/pollers.xml has been configured, simply start bin/ogslbd.
+
+Testing:
+You can use bin/view.py to get a basic idea of what has been collected by ogslbd and stored in redis.
 
