@@ -12,13 +12,13 @@ class TimeSeries:
       self._db = redis.Redis('localhost')
 
    def zput(self, key, value, when):
-      when = int(when)
+#      when = int(when)
       self._db.zadd(key, value, when)
 
    def zget(self, key):
       dataArray = []
       data = []
-      when = int(time())
+      when = time()
       data = self._db.zrangebyscore(key, (when - 120), when);
       for r in data:
          try:

@@ -106,7 +106,7 @@ def get(data, queue, passCount, dbConfig):
 
 
    data['status'] = found
-   data['when'] = int(t1)
+   data['when'] = t1
    data['pass'] = passCount
    data['reason'] = reason
 

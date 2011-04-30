@@ -19,12 +19,12 @@ t = TimeSeries()
 value = {}
 value['ip'] = '1.2.3.4'
 value['speed'] = 1234
-value['when'] = int(time())
+value['when'] = time()
 
 #t.zput('www.yahoo.com', value, value['when']);
 
 r = t.zget('www.google.com')
-#pp.pprint(r)
+pp.pprint(r)
 #t.zexpire('www.yahoo.com')
 
 
