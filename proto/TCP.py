@@ -25,13 +25,12 @@ def getTCP(host, port):
 
 def get(data, queue, passCount, Config):
    t1 = time.time()
-   found, reason = getTCP(data['ip'], data['port'])
+   found, reason = getTCP(data['address'], data['port'])
    t2 = time.time()
    speed = ((t2-t1)*1000.0)
 
    if speed >= 10000:
       reason = 'timeout'
 
-#   queue.put((data['Type'], data['port'], data['name'], data['ip'], found, speed, data['tag'], time.time(), passCount, reason, data['priority']))
    queue.put(data)
 

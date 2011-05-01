@@ -14,7 +14,5 @@ def get(data, queue, passCount, Config):
    data['pass'] = passCount
    data['reason'] = 'dummy'
 
-#   queue.put((data['Type'], 0, data['name'], data['ip'], 1, 1, data['tag'], time.time(), passCount, reason, data['priority']))
-
    queue.put(data)
 

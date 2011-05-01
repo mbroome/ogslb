@@ -36,13 +36,12 @@ def get(data, queue, passCount, Config):
 
    reason = ''
    t1 = time.time()
-   found, reason = getSMTP(data['ip'], port)
+   found, reason = getSMTP(data['address'], port)
    t2 = time.time()
    speed = ((t2-t1)*1000.0)
 
    if speed >= 10000:
       reason = 'timeout'
 
-#   queue.put((data['Type'], port, data['name'], data['ip'], found, speed, data['tag'], t1, passCount, reason, data['priority']))
    queue.put(data)
 

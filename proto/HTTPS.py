@@ -61,9 +61,9 @@ def get(data, queue, passCount, Config):
 
    # format the url
    try:
-      url = 'https://' + data['ip'] + ":" + data['port'] + data['url']
+      url = 'https://' + data['address'] + ":" + data['port'] + data['url']
    except:
-      url = 'https://' + data['ip'] + data['url']
+      url = 'https://' + data['address'] + data['url']
       data['port'] = 80
 
    # do the get and time it

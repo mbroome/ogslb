@@ -17,7 +17,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 t = TimeSeries()
 value = {}
-value['ip'] = '1.2.3.4'
+value['address'] = '1.2.3.4'
 value['speed'] = 1234
 value['when'] = time()
 
@@ -32,27 +32,27 @@ pp.pprint(r)
 priorities = {}
 for a in r:
    try:
-      priorities[a['ip']] = int(priorities[a['ip']]) + int(a['priority'])
+      priorities[a['address']] = int(priorities[a['address']]) + int(a['priority'])
    except:
-      priorities[a['ip']] = int(a['priority'])
+      priorities[a['address']] = int(a['priority'])
 
 #priorities['1.2.3.4'] = 70
 
 pp.pprint(priorities)
 
 high = 0
-iplist = {}
+addresslist = {}
 for k in priorities:
    if priorities[k] > high:
       high = priorities[k]
 
-ips = []
+addresss = []
 for k in priorities:
    if priorities[k] == high:
-      ips.append(k)
+      addresss.append(k)
 
 
-pp.pprint(ips)
+pp.pprint(addresss)
 
-print random.choice(ips)
+print random.choice(addresss)
 

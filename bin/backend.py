@@ -38,30 +38,30 @@ class DNSLookup(object):
               priorities = {}
               for a in r:
                  try:
-                    priorities[a['ip']] = int(priorities[a['ip']]) + int(a['priority'])
+                    priorities[a['address']] = int(priorities[a['address']]) + int(a['priority'])
                  except:
-                    priorities[a['ip']] = int(a['priority'])
+                    priorities[a['address']] = int(a['priority'])
 
 #              priorities['1.2.3.4'] = 70
 
 
               high = 0
-              iplist = {}
+              addresslist = {}
               for k in priorities:
                  if priorities[k] > high:
                     high = priorities[k]
 
-              ips = []
+              addresss = []
               for k in priorities:
                  if priorities[k] == high:
-                    ips.append(k)
+                    addresss.append(k)
 
 
-              debug_log(ips)
+              debug_log(addresss)
 
 #              debug_log( random.choice(ips) )
 
-              self.results.append('DATA\t%s\t%s\tA\t%d\t-1\t%s' % (qname, qclass, DNSLookup.ttl, random.choice(ips)))
+              self.results.append('DATA\t%s\t%s\tA\t%d\t-1\t%s' % (qname, qclass, DNSLookup.ttl, random.choice(addresss)))
               self.has_result = True
 
            except:

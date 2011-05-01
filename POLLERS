@@ -11,7 +11,7 @@ TCP             Simple tcp port connection
 The required fields for the Poll entry vary depending on the type of poller.  At a minumum, all pollers require the foll
 owing fields:
 Type            The poller to use for this test
-ip              The ip address to associate the test with
+address         The address address to associate the test with
 tag             A text string identifing the test
 priority        An arbitrary number associated with how important the test is
 
@@ -19,18 +19,18 @@ Dummy Poll:
 The dummy poll is used to artificaly inflate the priority of an address without having to adjust priorities of existing pollers.  As an example, givin 2 addresses where both can be checked with http for '/index.html'but only one can be checked for '/test/url', it is possible to 'dummy' the '/test/url' poll for the second address to keep it's total priority even.
 
 This entry will always succeed and give an additional 10 priority to 1.2.3.4 on every pass:
-   <Poll Type="DUMMY" ip="1.2.3.4" tag="test" priority="10" />
+   <Poll Type="DUMMY" address="1.2.3.4" tag="test" priority="10" />
 
-The dummy poll only requires the basic fields Type, ip, tag and priority.
+The dummy poll only requires the basic fields Type, address, tag and priority.
 
 Http Poll:
 The http poll performs an http check on an address.  It has the ability to look through the returned content for a text string or simply require a successful status code.
 
 This entry will check the url '/' on 1.2.3.4 looking for 'alive' in the response.  If it doesn't exist, it will fail this test.
-   <Poll Type="HTTP" url="/" response="alive" ip="1.2.3.4" tag="homepage" priority="20"/>
+   <Poll Type="HTTP" url="/" response="alive" address="1.2.3.4" tag="homepage" priority="20"/>
 
 This entry will pull the image '/pics/blank.gif' from 1.2.3.4 but since we can't look for a specific text string in the image, we simply revert to requiring a successful http status.
-   <Poll Type="HTTP" url="/pics/blank.gif" ip="1.2.3.4" tag="origin" priority="20" />
+   <Poll Type="HTTP" url="/pics/blank.gif" address="1.2.3.4" tag="origin" priority="20" />
 
 In addition to the required fields, the http poll requires the url. Optionally the response and port fields can be set.
 
@@ -41,7 +41,7 @@ Smtp Poll:
 The smtp poll verifies a mail server is accepting connections.  When connecting, it issues a 'helo' and disconnects.
 
 This entry verifies the mail server at 1.2.3.4 is alive.
-   <Poll Type="SMTP" ip="1.2.3.4" priority="20" tag="mail" />
+   <Poll Type="SMTP" address="1.2.3.4" priority="20" tag="mail" />
 
 The smtp poll requires the basic fields.
 
@@ -54,8 +54,8 @@ Additional notes:
 It is possible to create a primary/secondary scenario with ogslb due to it's priority mechanism.  To do so, simply artifically increase the priority of the primary to be more than the secondary even if both services are considered healthy.
 
    <VIP name="www.google.com">
-      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.105" tag="homepage" priority="80"/>
-      <Poll Type="HTTP" url="/" response="google" ip="74.125.113.147" tag="homepage" priority="20"/>
+      <Poll Type="HTTP" url="/" response="google" address="74.125.113.105" tag="homepage" priority="80"/>
+      <Poll Type="HTTP" url="/" response="google" address="74.125.113.147" tag="homepage" priority="20"/>
    </VIP>
 
 In the above example, even if both addesses are healthly, 74.125.113.105 will always be handed out until it dies for long enough to decrease it's priority below 74.125.113.147.  Due to pollers checking every 30 seconds and the powerdns backend looking at the last 120secs of data, it will take 74.125.113.105 being dead for the full 120sec before 74.125.113.147 is handed out.
