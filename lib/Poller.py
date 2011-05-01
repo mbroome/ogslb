@@ -18,6 +18,7 @@ class Poller(threading.Thread):
       self.threadName = "poller-" + str(threadID)
       threading.Thread.__init__(self, name=self.threadName)
 
+      # figure out where the protocol analizers live
       protoDir = ''
       try:
          protoDir = Config['protodir']
@@ -26,6 +27,7 @@ class Poller(threading.Thread):
       protoDir += '/*.py'
       l.debug("protodir: %s" % protoDir)
 
+      # and know load up all of the protocals
       fl = glob.glob(protoDir)
       self.adapters = {}
       for i in range(len(fl)):
@@ -41,13 +43,14 @@ class Poller(threading.Thread):
 
 
    def run(self):
-      while 1:
+      while 1: # watch the queue forever
          item = self.__queue.get()
          if item is None:
             break # reached end of queue
 
          vip, data, passCount = item
 
+         # based on the type of protocol, actually do the check
          try:
             r = self.adapters[ data['Type'] ].get(data, self.responderQueue, passCount, self.Config)
          except:

@@ -113,3 +113,6 @@ def get(data, queue, passCount, Config):
    # throw the collected data in the queue to be jammed into the database
    queue.put(data)
 
+   if found == 0:
+      l.debug("test failed: %s" % reason)
+

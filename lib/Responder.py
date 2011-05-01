@@ -28,7 +28,10 @@ class Responder(threading.Thread):
             if item is None:
                 break # reached end of queue
 
+            # store the info in redis
             self._db.zput(item['name'], item, item['when']);
+
+            # and cleanup any old data about this name
             self._db.zexpire(item['name']);
 
 

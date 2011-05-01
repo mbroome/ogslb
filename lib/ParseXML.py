@@ -16,6 +16,7 @@ def parseConfig(filename='poller.xml'):
    dom = xml.dom.minidom.parse(filename);
    vips = {}
 
+   l.debug("parsing poller config: %s" % filename)
    try:
       vipsData = dom.getElementsByTagName("VIP")
 
@@ -40,7 +41,7 @@ def parseConfig(filename='poller.xml'):
                v['data'].append(pollData);
             vips[vname] = v
    except:
-      l.debug("error finding vip configs")
+      l.info("error finding vip configs")
 
    return(vips)
 
