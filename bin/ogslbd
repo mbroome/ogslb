@@ -22,7 +22,8 @@ import signal
 import pprint
 import getopt
 
-import parsexml
+import ParseConfig
+import ParseXML
 from Responder import *
 from Poller import *
 
@@ -38,8 +39,8 @@ pollerQueue = Queue.Queue(0)
 responderQueue = Queue.Queue(0)
 
 def signal_handler(signal, frame):
-        print 'You pressed Ctrl+C!'
-        sys.exit(0)
+   print 'You pressed Ctrl+C!'
+   sys.exit(0)
 
 def watchThreads():
    threadcount = len(threading.enumerate())
@@ -53,31 +54,16 @@ def watchThreads():
          logger.debug("thread: %s" % t.getName())
          
 
-#def loadProto():
-#   fl = glob.glob('/opt/ogslb/proto/*.py')
-#   modulist = []
-#   adapters=[]
-#   for i in range(len(fl)):
-#       file = fl[i]
-##       print fl[i]
-#       fl[i] = fl[i].split('/')[4]
-#       if fl[i] != '__init__.py':
-##          print fl[i]
-#          fl[i] = fl[i][0:(len(fl[i])-3)]
-##          print fl[i]
-##          modulist.append(getattr(__import__(fl[i]),fl[i]))
-#          imp.load_source(fl[i], file)
-#          adapters.append(fl[i])
-##   pp.pprint(adapters)
-
 def usage():
    print "usage"
 
 def main(argv):
    signal.signal(signal.SIGINT, signal_handler)
-   logFile = '/var/log/ogslb.log'
-   configFile = '/opt/ogslb/etc/poller.xml'
+   configFile = '/opt/ogslb/etc/config.xml'
+   pollerFile = '/opt/ogslb/etc/poller.xml'
    debug = 0
+   overrideLogFile = ''
+
    try:
       opts, args = getopt.getopt(argv, "hc:l:d", ['config=', 'help', 'log=', 'debug'])
    except getopt.GetoptError:
@@ -91,9 +77,20 @@ def main(argv):
       elif opt == '-d':
          debug = 1
       elif opt in ('-l', '--log'):
-         logFile = arg
+         overrideLogFile = arg
       elif opt in ('-c', '--config'):
          configFile = arg
+
+   # load up the configs
+   Config = ParseXML.parseConfig(configFile);
+   # set the logfile to use
+   try:
+      logFile = Config['logfile']
+   except:
+      logFile = '/var/log/ogslb.log'
+
+   if overrideLogFile:
+      logFile = overrideLogFile
 
    # setup the logger
    logger = logging.getLogger("ogslb")
@@ -106,18 +103,16 @@ def main(argv):
 
    logger.debug('startup')
 
-   # parse the xml config and start looping pushing jobs into the queue
-   dbConfig, vips = parsexml.parseConfig(configFile);
-
-#   loadProto()
+   # parse the poller config
+   vips = ParseXML.parseConfig(pollerFile);
 
    # setup the poller thread pool
    for i in range(maxPoller):
-      Poller(pollerQueue, dbConfig, responderQueue, i).start() # start a worker
+      Poller(pollerQueue, Config, responderQueue, i).start() # start a worker
 
    # setup the responder thread pool
    for i in range(maxResponder):
-      Responder(responderQueue, dbConfig, i).start() # start a worker
+      Responder(responderQueue, Config, i).start() # start a worker
 
 
    # start looping pushing jobs into the queue

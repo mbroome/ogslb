@@ -49,7 +49,7 @@ def getUrl(url, headers):
 
       
 # deal with preparing to get the content and handling it's response
-def get(data, queue, passCount, dbConfig):
+def get(data, queue, passCount, Config):
    reason = ''
    headers = {'Host': data['name']}
    

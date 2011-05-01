@@ -23,7 +23,7 @@ def getTCP(host, port):
       reason = "error connecting %s" % host
    return((status, reason))
 
-def get(data, queue, passCount, dbConfig):
+def get(data, queue, passCount, Config):
    t1 = time.time()
    found, reason = getTCP(data['ip'], data['port'])
    t2 = time.time()

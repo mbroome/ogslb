@@ -14,14 +14,7 @@ def getText(nodelist):
 
 def parseConfig(filename='poller.xml'):
    dom = xml.dom.minidom.parse(filename);
-   dbconfig = {}
    vips = {}
-   try:
-      dbc = dom.getElementsByTagName('CONFIG')[0]
-      for a in dbc.attributes.keys():
-         dbconfig[a] = dbc.attributes[a].value
-   except:
-      l.debug("error getting config")
 
    try:
       vipsData = dom.getElementsByTagName("VIP")
@@ -49,5 +42,5 @@ def parseConfig(filename='poller.xml'):
    except:
       l.debug("error finding vip configs")
 
-   return((dbconfig, vips))
+   return(vips)
 

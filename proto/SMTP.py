@@ -28,7 +28,7 @@ def getSMTP(host, port):
       response = "error getting data: %s" % host
    return((ret, reason))
 
-def get(data, queue, passCount, dbConfig):
+def get(data, queue, passCount, Config):
    try:
       port = data['port']
    except:

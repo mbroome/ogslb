@@ -11,13 +11,13 @@ pp = pprint.PrettyPrinter(indent=4)
 l = logging.getLogger("ogslb")
 
 class Responder(threading.Thread):
-    def __init__(self, queue, dbConfig, threadID):
+    def __init__(self, queue, Config, threadID):
         self.__queue = queue
-        self.dbConfig = dbConfig
+        self.Config = Config
         self.threadName = "responder-" + str(threadID)
         threading.Thread.__init__(self, name=self.threadName)
 
-        myIP = socket.gethostbyname(socket.gethostname())
+#        myIP = socket.gethostbyname(socket.gethostname())
 
         self._db = TimeSeries()
 

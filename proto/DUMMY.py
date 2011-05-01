@@ -5,7 +5,7 @@ l = logging.getLogger("gslb")
 
 # this is a basic stub that lets you fake a successful check
 # to aid in balancing traffic with priorities across diverse systems
-def get(data, queue, passCount, dbConfig):
+def get(data, queue, passCount, Config):
 
    data['port'] = 0
    data['found'] = 1
