@@ -28,15 +28,17 @@ pp.pprint(r)
 #t.zexpire('www.yahoo.com')
 
 
-
+addressData = {}
 priorities = {}
 for a in r:
    try:
       priorities[a['address']] = int(priorities[a['address']]) + int(a['priority'])
    except:
       priorities[a['address']] = int(a['priority'])
+   addressData[a['address']] = a
 
 #priorities['1.2.3.4'] = 70
+pp.pprint(addressData)
 
 pp.pprint(priorities)
 

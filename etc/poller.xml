@@ -5,6 +5,7 @@
       <Poll Type="HTTP" url="/" response="google" address="74.125.113.105" tag="homepage" priority="20"/>
       <Poll Type="HTTP" url="/" response="google" address="74.125.113.147" tag="homepage" priority="20"/>
       <Poll Type="HTTP" url="/" response="google" address="74.125.113.103" tag="homepage" priority="20"/>
+      <Poll Type="HTTP" url="/"  address="www.1.google.com" recordtype="CNAME" tag="homepage" priority="20"/>
 
    </VIP>
 

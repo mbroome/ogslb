@@ -1,6 +1,14 @@
 Welcome to Open Global Server LoadBalancer!
 
-Open Global Server LoadBalancer (oGSLB) is a way to use dns to distribute requests to destinations while accounting for additional metrics about the destination.  Metrics can include such things as health, bandwidth and even arbitrary priorities associated with destinations.  The metrics data collected by oGSLB is feed into PowerDNS via a piped backend to be served to clients.
+Open Global Server LoadBalancer (ogslb) is a way to use dns to distribute requests to destinations while accounting for additional metrics about the destination.  Metrics can include such things as health, bandwidth and even arbitrary priorities associated with destinations.  The metrics data collected by oGSLB is feed into PowerDNS via a piped backend to be served to clients.
+
+Features:
+Balance requests evenly across multiple destinations
+Destinations can include ip addresses (A records) as well as hostnames (CNAME records) or a mix of both
+Custom protocols.  User created metrics can include anything such as requests/sec, bandwidth, response time.
+Fallthrough architecture.  If a problem arises in ogslb, powerdns will bypass it.
+Only need to configure addresses that need healthchecking.  If ogslb does not own the address, it tells powerdns so and lets it be served normally.
+Ability to create primary/secondary configuration with automatic dns failover.
 
 Metrics:
 Metrics within oGSLB are collected via custom python modules used to collect data about a destination.  All such metrics have a default 10sec timeout on the test.  These modules live in the proto directory and are named after the kind of test they perform.  Metrics are stored in a redis database for use by the pdns backend process when filling dns requests.  Currently, the metrics oGSLB understands how to collect include:
@@ -16,4 +24,8 @@ oGSLB associates priorities with each of the collected metrics.  Priorities are 
 
 Traffic Balancing:
 oGSLB uses the combination of metrics and thier associated priorities to rank destinations.  Each metric about a destination includes the priority of that metric.  When a dns request is being filled, the last 120seconds of metrics about the hostname is pulled from redis.  For each ip address that could be used for the given name, all of the priority numbers are added up.  Once each ip address has it's total priority number calculated, a random selection is made from the highest priority number.  That selection is the ip address returned to the client as the destination for the requested hostname.
+
+
+Mitchell Broome
+mitchell.broome@gmail.com
 

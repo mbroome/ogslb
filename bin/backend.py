@@ -1,11 +1,10 @@
 #!/usr/bin/python
 import sys, os
-#scriptPath = os.path.realpath(os.path.dirname(sys.argv[0]))
+scriptPath = os.path.realpath(os.path.dirname(sys.argv[0]))
 
 # account for where we live
-#sys.path.append(scriptPath + '/..')
-#sys.path.append(scriptPath + '/../lib')
-sys.path.append('/opt/ogslb/lib')
+sys.path.append(scriptPath + '/..')
+sys.path.append(scriptPath + '/../lib')
 
 from TimeSeries import *
 import time
@@ -26,23 +25,27 @@ class DNSLookup(object):
         """
         (_type, qname, qclass, qtype, _id, ip) = query
         self.has_result = False  # has a DNS query response
+
+        # we only deal with a few of the query types
         if(qtype == 'A' or qtype == 'ANY' or qtype == 'CNAME'):
 
            qname_lower = qname.lower()
 
            self.results = []
+           selectedAddres = ''
+           recordType = ''
            try:
               t = TimeSeries()
               r = t.zget(qname_lower)
 
+              addressData = {}
               priorities = {}
               for a in r:
                  try:
                     priorities[a['address']] = int(priorities[a['address']]) + int(a['priority'])
                  except:
                     priorities[a['address']] = int(a['priority'])
-
-#              priorities['1.2.3.4'] = 70
+                 addressData[a['address']] = a
 
 
               high = 0
@@ -57,29 +60,29 @@ class DNSLookup(object):
                     addresss.append(k)
 
 
+              debug_log("########## address list");
               debug_log(addresss)
 
-#              debug_log( random.choice(ips) )
+              debug_log("########## pick an address");
+              selectedAddres = random.choice(addresss)
 
-              self.results.append('DATA\t%s\t%s\tA\t%d\t-1\t%s' % (qname, qclass, DNSLookup.ttl, random.choice(addresss)))
+              try:
+                 if addressData[selectedAddres]['recordtype']:
+                    recordType = addressData[selectedAddres]['recordtype']
+              except:
+                 recordType = 'A'
+
+              debug_log("##############  here");
+              debug_log(selectedAddres)
+              debug_log(recordType)
+
+              self.results.append('DATA\t%s\t%s\t%s\t%d\t-1\t%s' % (qname, qclass, recordType, DNSLookup.ttl, selectedAddres))
               self.has_result = True
 
            except:
               debug_log("no record")
 
         
-#        if (qtype == 'A' or qtype == 'ANY') and qname_lower == 'webserver.example.com':
-#            self.results.append('DATA\t%s\t%s\tA\t%d\t-1\t1.2.3.4' %
-#                                (qname, qclass, DNSLookup.ttl))
-#            self.results.append('DATA\t%s\t%s\tA\t%d\t-1\t1.2.3.5' %
-#                                (qname, qclass, DNSLookup.ttl))
-#            self.results.append('DATA\t%s\t%s\tA\t%d\t-1\t1.2.3.6' %
-#                                (qname, qclass, DNSLookup.ttl))
-#            self.has_result = True
-#        elif (qtype == 'CNAME' or qtype == 'ANY') and qname_lower == 'www.example.com':
-#            self.results.append('DATA\t%s\t%s\tCNAME\t%d\t-1\twebserver.example.com' %
-#                                (qname, qclass, DNSLookup.ttl))
-#            self.has_result = True
 
     def str_result(self):
         """return string result suitable for pipe-backend output to PowerDNS."""
@@ -155,8 +158,6 @@ class PowerDNSbackend(object):
 if __name__ == '__main__':
     logger = Logger()
     infile = sys.stdin
-    #sys.stdout.close()
-    #outfile = os.fdopen(1, 'w', 1)
     outfile = sys.stdout
     try:
         PowerDNSbackend(infile, outfile)
