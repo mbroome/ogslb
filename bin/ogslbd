@@ -94,14 +94,23 @@ def main(argv):
 
    # setup the logger
    logger = logging.getLogger("ogslb")
-   logger.setLevel(logging.DEBUG)
+   if(debug):
+      logger.setLevel(logging.DEBUG)
+   else:
+      logger.setLevel(logging.INFO)
+
    ch = logging.handlers.RotatingFileHandler(logFile, maxBytes=25000000, backupCount=5)
-   ch.setLevel(logging.DEBUG)
-   formatter = logging.Formatter("%(created)f - %(name)s - %(levelname)s - %(message)s")
+
+   if(debug):
+      ch.setLevel(logging.DEBUG)
+   else:
+      ch.setLevel(logging.INFO)
+
+   formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
    ch.setFormatter(formatter)
    logger.addHandler(ch)
 
-   logger.debug('startup')
+   logger.info('startup')
 
    # parse the poller config
    vips = ParseXML.parseConfig(pollerFile);
