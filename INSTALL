@@ -3,6 +3,7 @@ Installing ogslb
 Requirements:
 python
 redis
+python-redis
 powerdns
 
 Install:
