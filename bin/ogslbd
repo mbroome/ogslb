@@ -26,6 +26,7 @@ import ParseConfig
 import ParseXML
 from Responder import *
 from Poller import *
+from Stats import *
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -114,6 +115,14 @@ def main(argv):
 
    # parse the poller config
    vips = ParseXML.parseConfig(pollerFile);
+
+   # for each of the hostnames we are monitoring, we stick the name in redis
+   # that way, we can associate which timeseries keys we are monitoring
+   stats = Stats();
+   stats.sexpire()
+   for v in vips:
+      stats.sput(v)
+
 
    # setup the poller thread pool
    for i in range(maxPoller):
