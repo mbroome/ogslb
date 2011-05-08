@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os, sys, glob, imp
 
+# figure out where the script is so we can setup paths relative to it
 scriptPath = os.path.realpath(os.path.dirname(sys.argv[0]))
 
 # account for where we live
@@ -28,17 +29,18 @@ from Responder import *
 from Poller import *
 from Stats import *
 
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
 
 # define how many threads of each type we should fire up
 maxPoller=10
 maxResponder=6
 
-
 # setup the different queues
 pollerQueue = Queue.Queue(0)
 responderQueue = Queue.Queue(0)
 
+# trap ctrl+c
 def signal_handler(signal, frame):
    print 'You pressed Ctrl+C!'
    sys.exit(0)
@@ -54,23 +56,28 @@ def watchThreads():
 #         pp.pprint("thread: %s" % t.getName())
          logger.debug("thread: %s" % t.getName())
          
-
+# guess what we do here
 def usage():
    print "usage"
 
+# the main program
 def main(argv):
    signal.signal(signal.SIGINT, signal_handler)
+
+   # define some defaults
    configFile = '/opt/ogslb/etc/config.xml'
    pollerFile = '/opt/ogslb/etc/poller.xml'
    debug = 0
    overrideLogFile = ''
 
+   # parse the command line arguments
    try:
       opts, args = getopt.getopt(argv, "hc:l:d", ['config=', 'help', 'log=', 'debug'])
    except getopt.GetoptError:
       usage()
       sys.exit(2)
 
+   # override defaults based on command line arguments
    for opt, arg in opts:
       if opt in ('-h', '--help'):
          usage()
@@ -84,6 +91,7 @@ def main(argv):
 
    # load up the configs
    Config = ParseXML.parseConfig(configFile);
+
    # set the logfile to use
    try:
       logFile = Config['logfile']
@@ -111,6 +119,7 @@ def main(argv):
    ch.setFormatter(formatter)
    logger.addHandler(ch)
 
+   # and now start up the logger
    logger.info('startup')
 
    # parse the poller config
@@ -147,6 +156,7 @@ def main(argv):
       time.sleep(30)
 
 
+# start up main()
 if __name__ == "__main__":
    main(sys.argv[1:])
 

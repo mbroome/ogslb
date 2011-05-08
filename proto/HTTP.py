@@ -6,7 +6,8 @@ import logging
 import string 
 from random import Random
 
-l = logging.getLogger("ogslb")
+# fire up the logger
+logger = logging.getLogger("ogslb")
 
 # timeout in seconds
 timeout = 10
@@ -14,7 +15,11 @@ socket.setdefaulttimeout(timeout)
 
 import urllib2
 
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
+
+# this is the HTTP test.  Here, we actually make a http request 
+# and figure out assorted important things about what we found.
 
 # do the actual http get and return headers
 def getUrl(url, headers):
@@ -51,6 +56,8 @@ def getUrl(url, headers):
 # deal with preparing to get the content and handling it's response
 def get(data, queue, passCount, Config):
    reason = ''
+   # we create a Host: header for the hostname we are testing.
+   # this makes http/1.1 happy
    headers = {'Host': data['name']}
    
    try: # if there was a response defined to look for, make a regex
@@ -87,6 +94,8 @@ def get(data, queue, passCount, Config):
          found = 0
       else:
          found = 1
+
+   # now figure out how long it took to do the test
    data['speed'] = ((t2-t1)*1000.0)
 
    # If the get wasn't sucessful, figure out why
@@ -105,6 +114,7 @@ def get(data, queue, passCount, Config):
          reason = "content match error" + " saved error: " + data['Type'] + '-' + str(data['port']) + '/' + data['name'] + '/' + errorID
 
 
+   # build up data with what we have discovered
    data['status'] = found
    data['when'] = t1
    data['pass'] = passCount
@@ -114,5 +124,5 @@ def get(data, queue, passCount, Config):
    queue.put(data)
 
    if found == 0:
-      l.debug("test failed: %s" % reason)
+      logger.debug("test failed: %s" % reason)
 

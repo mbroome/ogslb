@@ -2,8 +2,11 @@ import xml.dom.minidom
 import logging
 import pprint
 
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
-l = logging.getLogger("ogslb")
+
+# and fire up the logger
+logger = logging.getLogger("ogslb")
 
 def getText(nodelist):
     rc = []
@@ -12,11 +15,12 @@ def getText(nodelist):
             rc.append(node.data)
     return ''.join(rc)
 
+# parse the xml for pollers
 def parseConfig(filename='poller.xml'):
    dom = xml.dom.minidom.parse(filename);
    vips = {}
 
-   l.debug("parsing poller config: %s" % filename)
+   logger.debug("parsing poller config: %s" % filename)
    try:
       vipsData = dom.getElementsByTagName("VIP")
 
@@ -41,7 +45,7 @@ def parseConfig(filename='poller.xml'):
                v['data'].append(pollData);
             vips[vname] = v
    except:
-      l.info("error finding vip configs")
+      logger.info("error finding vip configs")
 
    return(vips)
 

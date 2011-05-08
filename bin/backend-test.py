@@ -10,6 +10,9 @@ sys.path.append(scriptPath + '/../lib')
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+# this is a very basic program to test backend.py.  We effectivly emulate the
+# PowerDNS protocol and talk to it on stdout and read back from stdin.
+# Basically, just call this with a hostname as an argument
 if __name__ == '__main__':
    host = ''
    try:

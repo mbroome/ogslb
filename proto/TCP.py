@@ -4,11 +4,15 @@ import re
 import pprint
 import logging
 
-l = logging.getLogger("gslb")
+# fire up the logger
+logger = logging.getLogger("ogslb")
 
 timeout = 10
 socket.setdefaulttimeout(timeout)
 
+# The TCP test is the most basic test that actually talks to a server.
+# we basically just connect to a tcp port and if something was listening,
+# then we assume the service is alive
 
 def getTCP(host, port):
    status = 0

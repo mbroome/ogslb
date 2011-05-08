@@ -2,8 +2,11 @@ import xml.dom.minidom
 import logging
 import pprint
 
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
-l = logging.getLogger("ogslb")
+
+# and fire up the logger
+logger = logging.getLogger("ogslb")
 
 def getText(nodelist):
     rc = []
@@ -12,6 +15,7 @@ def getText(nodelist):
             rc.append(node.data)
     return ''.join(rc)
 
+# parse the config.xml for how to configure ogslb
 def parseConfig(filename='config.xml'):
    dom = xml.dom.minidom.parse(filename);
    config = {}
@@ -20,7 +24,7 @@ def parseConfig(filename='config.xml'):
       for a in dbc.attributes.keys():
          config[a] = dbc.attributes[a].value
    except:
-      l.debug("error getting config")
+      logger.debug("error getting config")
 
 
    return(config)

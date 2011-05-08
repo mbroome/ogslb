@@ -1,7 +1,7 @@
 import time
 import logging
 
-l = logging.getLogger("gslb")
+logger = logging.getLogger("ogslb")
 
 # this is a basic stub that lets you fake a successful check
 # to aid in balancing traffic with priorities across diverse systems

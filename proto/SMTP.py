@@ -4,7 +4,8 @@ import re
 import pprint
 import logging
 
-l = logging.getLogger("gslb")
+# fire up the logger
+logger = logging.getLogger("ogslb")
 
 # timeout in seconds
 timeout = 10
@@ -12,8 +13,13 @@ socket.setdefaulttimeout(timeout)
 
 import smtplib
 
+# and setup pprint for debugging
 #pp = pprint.PrettyPrinter(indent=4)
 
+# The SMTP test makes sure we can do a very basic smtp test.  Basically,
+# we just connect to a mail server and issue a helo
+
+# actually do the smtp test
 def getSMTP(host, port):
    ret = 0
    reason = ''
@@ -27,6 +33,7 @@ def getSMTP(host, port):
    except:
       response = "error getting data: %s" % host
    return((ret, reason))
+
 
 def get(data, queue, passCount, Config):
    try:

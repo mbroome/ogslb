@@ -6,10 +6,14 @@ import random
 import time
 import pprint
 
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
-l = logging.getLogger("ogslb")
 
+# and setup the logger
+logger = logging.getLogger("ogslb")
 
+# The Poller class defines a thread that is used to monitor addresses.
+# It loads up protocols from the proto dir, watches the queue and performs tests
 class Poller(threading.Thread):
    def __init__(self, queue, Config, responderQueue, threadID):
       self.__queue = queue
@@ -25,7 +29,7 @@ class Poller(threading.Thread):
       except:
          protoDir = '/opt/ogslb/proto'
       protoDir += '/*.py'
-      l.debug("protodir: %s" % protoDir)
+      logger.debug("protodir: %s" % protoDir)
 
       # and know load up all of the protocals
       fl = glob.glob(protoDir)
@@ -39,7 +43,7 @@ class Poller(threading.Thread):
              self.adapters[fl[i]] = r
 
    def __del__(self):
-      l.debug("thread exiting")
+      logger.debug("thread exiting")
 
 
    def run(self):
@@ -48,13 +52,14 @@ class Poller(threading.Thread):
          if item is None:
             break # reached end of queue
 
+         # now that we have something we picked up from the queue, parse it and get busy
          vip, data, passCount = item
 
          # based on the type of protocol, actually do the check
          try:
             r = self.adapters[ data['Type'] ].get(data, self.responderQueue, passCount, self.Config)
          except:
-            l.debug("error in get")
+            logger.debug("error in get")
 
 
 

@@ -6,10 +6,13 @@ import logging
 from TimeSeries import *
 import pprint
 
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
 
-l = logging.getLogger("ogslb")
+# and fire up the logger
+logger = logging.getLogger("ogslb")
 
+# the Responder class watches for responses from each test and inserts them into redis
 class Responder(threading.Thread):
     def __init__(self, queue, Config, threadID):
         self.__queue = queue
@@ -17,13 +20,12 @@ class Responder(threading.Thread):
         self.threadName = "responder-" + str(threadID)
         threading.Thread.__init__(self, name=self.threadName)
 
-#        myIP = socket.gethostbyname(socket.gethostname())
-
+        # setup the time series connection
         self._db = TimeSeries()
 
 
     def run(self):
-        while 1:
+        while 1: # watch the queue forever
             item = self.__queue.get()
             if item is None:
                 break # reached end of queue

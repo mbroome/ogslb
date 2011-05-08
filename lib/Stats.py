@@ -1,11 +1,16 @@
 
 import redis
 import pprint
+
+# setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
 
 
+# the Stats class abstracts away how we deal with statistics collected.
+# these statistics are at a more global level that what is managed in
+# TimeSeries which is collected from responses to tests.  Stats is used
+# for things such as collecting info about how ogslb it's self is doing
 class Stats:
-
    def __init__(self):
       self._db = redis.Redis('localhost')
 

@@ -8,7 +8,7 @@ sys.path.append(scriptPath + '/..')
 sys.path.append(scriptPath + '/../lib')
 sys.path.append(scriptPath + '/../proto')
 
-from time import time;
+from time import *
 from TimeSeries import *
 from Stats import *
 import pprint
@@ -30,6 +30,7 @@ for i in r:
 #   pp.pprint(x)
    c = 1
    for y in x:
-      print "%d: %s" % (c, y)
+#      print "%d: %s" % (c, y)
+      print "%s: %s:\t%d %.4f" % (asctime( localtime( y['when'] )), y['address'], y['status'], y['speed'])
       c = c + 1
    print '\n'
