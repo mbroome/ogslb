@@ -7,7 +7,7 @@ python-redis
 powerdns
 
 Install:
-Currently, ogslb has some hard coded paths that require it to live under /opt/ogslb.  
+By default, ogslb lives under /opt/ogslb but it can be placed anywhere.  Simply edit 'etc/config.xml' to point to the correct paths.
 
 Redis needs to be running on 'localhost'.
 
