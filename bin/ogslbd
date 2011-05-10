@@ -58,7 +58,17 @@ def watchThreads():
          
 # guess what we do here
 def usage():
-   print "usage"
+   print """ogslbd: Open Global Server Load Balancer
+Mitchell Broome (mitchell.broome@gmail.com)
+
+ogslbd [-c=/path/to/config.xml] [-l=/path/to/logfile] [-d] [-?]
+
+-c	Config file.  Default: /opt/ogslb/etc/config.xml
+-l	Log file.  Default: /var/log/ogslb.log
+-d	Enable debugging
+-?	Print help
+
+"""
 
 # the main program
 def main(argv):
