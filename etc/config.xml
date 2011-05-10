@@ -1,12 +1,8 @@
 <?xml version="1.0" ?>
 <OGSLB>
 
-   <!-- this config block needs to be pulled out of here... -->
    <CONFIG 
         redishost="localhost" 
-        dbname="gslb" 
-        dbuser="gslb" 
-        dbpass="gslb" 
         logfile="/var/log/ogslb.log"
         pollerxml="/opt/ogslb/etc/poller.xml"
         protodir="/opt/ogslb/proto"
