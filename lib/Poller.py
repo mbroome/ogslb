@@ -27,7 +27,7 @@ class Poller(threading.Thread):
       try:
          protoDir = Config['protodir']
       except:
-         protoDir = '/opt/ogslb/proto'
+         protoDir = '/opt/ogslb/proto' # default to here if not configured in config.xml
       protoDir += '/*.py'
       logger.debug("protodir: %s" % protoDir)
 

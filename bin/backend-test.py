@@ -22,8 +22,9 @@ if __name__ == '__main__':
       sys.exit()
 
    try:
-      p = Popen("/opt/ogslb/bin/backend.py", shell=True, bufsize=256, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True) 
-#      p = Popen("/opt/ogslb/bin/backend.py", shell=True, bufsize=256, stdin=PIPE, stdout=PIPE, close_fds=True) 
+      scriptName = scriptPath + '/backend.py'
+      p = Popen(scriptName, shell=True, bufsize=256, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True) 
+#      p = Popen(scriptName, shell=True, bufsize=256, stdin=PIPE, stdout=PIPE, close_fds=True) 
       (child_stdin, child_stdout) = (p.stdin, p.stdout)
 
       child_stdin.write('HELO\t1\n');
