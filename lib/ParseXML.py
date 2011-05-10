@@ -33,7 +33,7 @@ def getText(nodelist):
     return ''.join(rc)
 
 # parse the xml for pollers
-def parseConfig(filename='poller.xml'):
+def parseXML(filename='poller.xml'):
    dom = xml.dom.minidom.parse(filename);
    vips = {}
 

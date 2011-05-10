@@ -92,8 +92,8 @@ def main(argv):
    signal.signal(signal.SIGINT, signal_handler)
 
    # define some defaults
-   configFile = '/opt/ogslb/etc/config.xml'
-   pollerFile = '/opt/ogslb/etc/poller.xml'
+   configFile = scriptPath + '/../etc/config.xml'
+   pollerFile = scriptPath + '/../etc/poller.xml'
    debug = 0
    overrideLogFile = ''
 
@@ -117,7 +117,7 @@ def main(argv):
          configFile = arg
 
    # load up the configs
-   Config = ParseXML.parseConfig(configFile);
+   Config = ParseConfig.parseConfig(configFile);
 
    # set the logfile to use
    try:
@@ -150,7 +150,7 @@ def main(argv):
    logger.info('startup')
 
    # parse the poller config
-   vips = ParseXML.parseConfig(pollerFile);
+   vips = ParseXML.parseXML(pollerFile);
 
    # for each of the hostnames we are monitoring, we stick the name in redis
    # that way, we can associate which timeseries keys we are monitoring

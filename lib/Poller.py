@@ -42,7 +42,7 @@ class Poller(threading.Thread):
       # figure out where the protocol analizers live
       protoDir = ''
       try:
-         protoDir = Config['protodir']
+         protoDir = self.Config['protodir']
       except:
          protoDir = '/opt/ogslb/proto' # default to here if not configured in config.xml
       protoDir += '/*.py'
@@ -52,11 +52,12 @@ class Poller(threading.Thread):
       fl = glob.glob(protoDir)
       self.adapters = {}
       for i in range(len(fl)):
-          file = fl[i]
-          fl[i] = fl[i].split('/')[4]
+          filename = fl[i]
+          modpath = fl[i].split('/')
+          fl[i] = modpath[len(modpath)  - 1]
           if fl[i] != '__init__.py': # don't try to load the __init__.py file
              fl[i] = fl[i][0:(len(fl[i])-3)]
-             r = imp.load_source(fl[i], file)
+             r = imp.load_source(fl[i], filename)
              self.adapters[fl[i]] = r
 
    def __del__(self):

@@ -43,6 +43,5 @@ def parseConfig(filename='config.xml'):
    except:
       logger.debug("error getting config")
 
-
    return(config)
 
