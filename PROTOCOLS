@@ -1,0 +1,32 @@
+Protocols in ogslb are implemented as python modules.  A protocol is meant to collect data about a givin hostname and determine if the hostname is healthy.  They live in the 'proto' directory under ogslb and are named after the 'Type' of test defined in 'etc/poller.xml'.  As an example, 'proto/HTTP.py' is the HTTP test defined as the following in poller.xml:
+ 
+   <Poll Type="HTTP" url="/" response="google" address="74.125.113.105" tag="homepage" priority="20"/>
+
+Protocols are required to implement the following method:
+
+def get(data, queue, passCount, config)
+The get() method is called by ogslb and is responsible for performing the particular test.  It should collect whatever data is needed to perform the test as well as what should be stored within the database for viewing of statistics during runtime.  When a test is finished, get() should insert the collected data into the response queue.  Any given test should not be allowed to run longer that 30sec (the polling interval).  
+
+data		A hash of the data defined in a <Poll> config in etc/poller.xml
+queue		The queue to send the response of the test to
+passCount	The number of times ogslb has performed the test since startup
+config		A hash of the configuration of ogslb as defined in etc/config.xml
+
+The data hash passed to get() is required to contain at a least the following fields:
+
+name		The hostname associated with the address.  This is the name that was requested via PowerDNS.
+address		The address of the service being tested.  This can be an ip address or hostname.
+priority	The arbitrary priority assigned to the test.
+
+Typically, the data hash has fields added to it before it is then passed to the queue.  The following fields are required in addition to the previously required fields:
+
+when		The time when the test was performed.
+status		A number defining the success or failure of the test: 0 = fail, 1 = success
+
+Any other data inserted into the data hash before it is passed to the queue becomes available in the database but is not used by ogslb.  To queue the collected data, simply use:
+
+queue.put(data)
+
+
+
+
