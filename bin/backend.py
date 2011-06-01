@@ -49,7 +49,7 @@ def DNSLookup(query):
 
    results = ''
    # we only deal with a few of the query types
-   if(qtype == 'A' or qtype == 'ANY' or qtype == 'CNAME'):
+   if(qtype == 'A' or qtype == 'ANY' or qtype == 'CNAME' or qtype == 'SOA'):
 
       # we deal with everything in lowercase
       qname_lower = qname.lower()
