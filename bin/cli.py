@@ -25,6 +25,8 @@ sys.path.append(scriptPath + '/..')
 sys.path.append(scriptPath + '/../lib')
 sys.path.append(scriptPath + '/../proto')
 
+import getopt
+
 from time import *
 from TimeSeries import *
 from Stats import *
@@ -33,21 +35,65 @@ import random
 
 pp = pprint.PrettyPrinter(indent=4)
 
-t = TimeSeries()
-s = Stats()
+def getData(fields):
+   t = TimeSeries()
+   s = Stats()
 
-#r = t.zget('www.google.com')
+   r = s.sget()
 
-r = s.sget()
+   for i in r:
+      print "Hostname: %s" % i
+      line = "when\t\t\t\t"
+      for f in fields:
+         if f != 'when':
+            line += f +"\t" 
+      print "%s" % line
 
-for i in r:
-   print "Hostname: %s" % i
-   x = t.zget(i)
-#   print x
-#   pp.pprint(x)
-   c = 1
-   for y in x:
-#      print "%d: %s" % (c, y)
-      print "%s: %s:\t%d %.4f" % (asctime( localtime( y['when'] )), y['address'], y['status'], y['speed'])
-      c = c + 1
-   print '\n'
+      x = t.zget(i)
+      for y in x:
+         line = "%s" % asctime( localtime( y['when'] )) 
+         line += "\t"
+         for f in fields:
+            if f != 'when':
+               try:
+                  if type(y[f]) == 'int':
+                     line += y[f] + "\t"
+                  elif type(y[f]) == 'float':
+                     line += "%.2f" % y[f]
+                     line += "\t"
+                  else:
+                     line += str(y[f]) + "\t"
+               except:
+                  line += "-\t"
+         print "%s" % line
+      print '\n'
+
+
+def main(argv):
+
+   # parse the command line arguments
+   try:
+      opts, args = getopt.getopt(argv, "hf:n:", ['help', 'fields=', 'name'])
+   except getopt.GetoptError:
+      sys.exit(2)
+
+   field = 'status,address,speed'
+   name = ''
+   # override defaults based on command line arguments
+   for opt, arg in opts:
+      if opt in ('-h', '--help'):
+         usage()
+         sys.exit()
+      elif opt == '-f':
+         field = arg
+      elif opt == '-n':
+         name = arg
+
+   fields = field.split(',');
+   getData(fields)
+
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
+
+
