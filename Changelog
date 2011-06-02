@@ -1,0 +1,11 @@
+
+v0.6 6/1/11	Mitchell Broome <mitchell.broome@gmail.com>
+   * Tested with PowerDNS 3.0-RC2
+   * Added cli to view current stats
+   * Hardcoded paths removed
+   * Additional documentation
+   * Added GPL2 license
+   
+v0.5 5/5/11	Mitchell Broome <mitchell.broome@gmail.com>
+   * Initial public release
+
