@@ -69,6 +69,20 @@ def getData(fields):
       print '\n'
 
 
+def usage():
+   print """cli.py: command line client for ogslb
+Mitchell Broome (mitchell.broome@gmail.com)
+
+cli.py [-f=field1,field2] [-h]
+
+-f      Comma separated list of fields to display (default: status,address,speed)
+	Field names come from attributes defined in poller.xml for each poller
+-h      Print help
+
+"""
+
+
+
 def main(argv):
 
    # parse the command line arguments
