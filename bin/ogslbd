@@ -35,7 +35,8 @@ import xml.dom.minidom
 import threading
 import Queue
 import random
-import time
+#import time
+from time import *
 import signal
 import pprint
 import getopt
@@ -51,7 +52,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # define how many threads of each type we should fire up
 maxPoller=10
-maxResponder=6
+maxResponder=4
 
 # setup the different queues
 pollerQueue = Queue.Queue(0)
@@ -147,7 +148,7 @@ def main(argv):
    logger.addHandler(ch)
 
    # and now start up the logger
-   logger.info('startup')
+   logger.info("startup: db type: %s" % BackendType)
 
    # parse the poller config
    vips = ParseXML.parseXML(pollerFile);
@@ -155,9 +156,9 @@ def main(argv):
    # for each of the hostnames we are monitoring, we stick the name in redis
    # that way, we can associate which timeseries keys we are monitoring
    stats = Stats();
-   stats.sexpire()
+   stats.sexpire("stats.hostlist")
    for v in vips:
-      stats.sput(v)
+      stats.sput("stats.hostlist", v)
 
 
    # setup the poller thread pool
@@ -165,6 +166,8 @@ def main(argv):
       Poller(pollerQueue, Config, responderQueue, i).start() # start a worker
 
    # setup the responder thread pool
+   if BackendType == "sqlite":
+      maxResponder = 1
    for i in range(maxResponder):
       Responder(responderQueue, Config, i).start() # start a worker
 
@@ -180,7 +183,7 @@ def main(argv):
 
       # we push jobs into the queue every 30 seconds
       # this effectivly makes us do healtchecks every 30 seconds
-      time.sleep(30)
+      sleep(30)
 
 
 # start up main()

@@ -34,7 +34,7 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 logger = logging.getLogger("ogslb")
-redis = TimeSeries()
+db = TimeSeries()
 
 # backend.py is the python backend that is called by PowerDNS and talks to redis.
 # We listen to stdin and talk on stdout which effectivly attaches us to PowerDNS.
@@ -58,7 +58,7 @@ def DNSLookup(query):
       recordType = ''
       try:
          # see if we can find a matching hostname in redis
-         r = redis.zget(qname_lower)
+         r = db.zget(qname_lower)
 
          addressData = {}
          priorities = {}

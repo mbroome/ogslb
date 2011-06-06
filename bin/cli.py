@@ -39,7 +39,7 @@ def getData(fields):
    t = TimeSeries()
    s = Stats()
 
-   r = s.sget()
+   r = s.sget("stats.hostlist")
 
    for i in r:
       print "Hostname: %s" % i
