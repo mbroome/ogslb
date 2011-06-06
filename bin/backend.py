@@ -118,7 +118,7 @@ def fprint(message):
 def main():
    pid = os.getpid()
    logFile = '/tmp/backend-%d.log' % pid
-   debug = 0
+   debug = 1
 
    # setup the logger
    if(debug):
@@ -166,8 +166,9 @@ def main():
        else: # now we actually get busy
           query = line.split('\t')
           if len(query) != 6:
-             fprint('LOG\tPowerDNS sent unparseable line')
-             fprint('FAIL')
+#             fprint('LOG\tPowerDNS sent unparseable line')
+#             fprint('FAIL')
+             fprint('END')
           else:
              logger.debug('Performing DNSLookup(%s)' % repr(query))
              lookup = ''
