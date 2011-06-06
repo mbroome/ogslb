@@ -40,8 +40,8 @@ logger = logging.getLogger("ogslb")
 # window of time
 class TimeSeries:
 
-   def __init__(self):
-      logger.debug("responder startup")
+   def __init__(self, Config):
+      self._config = Config
       self._db = sqlite3.connect('/var/tmp/ogslb-timeseries.db', check_same_thread = False)
       try:
          self._setupDB()

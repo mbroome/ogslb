@@ -90,6 +90,7 @@ ogslbd [-c=/path/to/config.xml] [-l=/path/to/logfile] [-d] [-?]
 
 # the main program
 def main(argv):
+   global maxResponder
    signal.signal(signal.SIGINT, signal_handler)
 
    # define some defaults
@@ -155,7 +156,7 @@ def main(argv):
 
    # for each of the hostnames we are monitoring, we stick the name in redis
    # that way, we can associate which timeseries keys we are monitoring
-   stats = Stats();
+   stats = Stats(Config);
    stats.sexpire("stats.hostlist")
    for v in vips:
       stats.sput("stats.hostlist", v)

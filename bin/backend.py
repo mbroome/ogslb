@@ -25,6 +25,7 @@ scriptPath = os.path.realpath(os.path.dirname(sys.argv[0]))
 sys.path.append(scriptPath + '/..')
 sys.path.append(scriptPath + '/../lib')
 
+import ParseConfig
 from TimeSeries import *
 import time
 import logging
@@ -34,13 +35,13 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 logger = logging.getLogger("ogslb")
-db = TimeSeries()
+#db = TimeSeries()
 
 # backend.py is the python backend that is called by PowerDNS and talks to redis.
 # We listen to stdin and talk on stdout which effectivly attaches us to PowerDNS.
 
 # Here, we actually talk to redis and do our prioritizing of healthy services
-def DNSLookup(query):
+def DNSLookup(db, query):
    """parse DNS query and produce lookup result."""
 
    (_type, qname, qclass, qtype, _id, ip) = query
@@ -120,6 +121,12 @@ def main():
    logFile = '/tmp/backend-%d.log' % pid
    debug = 1
 
+   # define some defaults
+   configFile = scriptPath + '/../etc/config.xml'
+
+   # load up the configs
+   Config = ParseConfig.parseConfig(configFile);
+
    # setup the logger
    if(debug):
       logger.setLevel(logging.DEBUG)
@@ -141,6 +148,7 @@ def main():
    logger.info('startup')
 
    first_time = True
+   db = TimeSeries(Config)
 
    # here, we have to deal with how to talk to PowerDNS.
    while 1: # loop forever reading from PowerDNS
@@ -173,7 +181,7 @@ def main():
              logger.debug('Performing DNSLookup(%s)' % repr(query))
              lookup = ''
              # Here, we actually to the real work.  Lookup a hostname in redis and prioritize it
-             lookup = DNSLookup(query)
+             lookup = DNSLookup(db, query)
              if lookup != '':
                 logger.debug(lookup)
                 fprint(lookup)

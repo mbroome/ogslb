@@ -33,12 +33,14 @@ logger = logging.getLogger("ogslb")
 class Responder(threading.Thread):
     def __init__(self, queue, Config, threadID):
         self.__queue = queue
-        self.Config = Config
+        self._config = Config
         self.threadName = "responder-" + str(threadID)
         threading.Thread.__init__(self, name=self.threadName)
 
+        logger.debug("responder started: %s" % self.threadName)
+
         # setup the time series connection
-        self._db = TimeSeries()
+        self._db = TimeSeries(self._config)
 
 
     def run(self):

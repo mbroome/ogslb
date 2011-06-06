@@ -30,7 +30,8 @@ pp = pprint.PrettyPrinter(indent=4)
 # TimeSeries which is collected from responses to tests.  Stats is used
 # for things such as collecting info about how ogslb it's self is doing
 class Stats:
-   def __init__(self):
+   def __init__(self, Config):
+      self._config = Config
       self._db = redis.Redis('localhost')
 
    def sput(self, key, value):

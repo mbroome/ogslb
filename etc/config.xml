@@ -2,11 +2,15 @@
 <OGSLB>
 
    <CONFIG 
-        redishost="localhost" 
         logfile="/var/log/ogslb.log"
         pollerxml="/opt/ogslb/etc/poller.xml"
         protodir="/opt/ogslb/proto"
    /> 
+
+   <BACKEND
+   	type="redis"
+	host="localhost"
+   />
 
 </OGSLB>
 

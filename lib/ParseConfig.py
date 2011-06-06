@@ -36,12 +36,22 @@ def getText(nodelist):
 def parseConfig(filename='config.xml'):
    dom = xml.dom.minidom.parse(filename);
    config = {}
+   backend = {}
    try:
       dbc = dom.getElementsByTagName('CONFIG')[0]
       for a in dbc.attributes.keys():
          config[a] = dbc.attributes[a].value
    except:
       logger.debug("error getting config")
+
+   try:
+      dbc = dom.getElementsByTagName('BACKEND')[0]
+      for a in dbc.attributes.keys():
+         backend[a] = dbc.attributes[a].value
+      config['backend'] = backend
+   except:
+      logger.debug("error getting config")
+
 
    return(config)
 

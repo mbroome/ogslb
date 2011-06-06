@@ -28,6 +28,7 @@ sys.path.append(scriptPath + '/../proto')
 import getopt
 
 from time import *
+import ParseConfig
 from TimeSeries import *
 from Stats import *
 import pprint
@@ -35,9 +36,9 @@ import random
 
 pp = pprint.PrettyPrinter(indent=4)
 
-def getData(fields):
-   t = TimeSeries()
-   s = Stats()
+def getData(Config, fields):
+   t = TimeSeries(Config)
+   s = Stats(Config)
 
    r = s.sget("stats.hostlist")
 
@@ -84,6 +85,8 @@ cli.py [-f=field1,field2] [-h]
 
 
 def main(argv):
+   # define some defaults
+   configFile = scriptPath + '/../etc/config.xml'
 
    # parse the command line arguments
    try:
@@ -103,8 +106,11 @@ def main(argv):
       elif opt == '-n':
          name = arg
 
+   # load up the configs
+   Config = ParseConfig.parseConfig(configFile);
+
    fields = field.split(',');
-   getData(fields)
+   getData(Config, fields)
 
 
 if __name__ == "__main__":

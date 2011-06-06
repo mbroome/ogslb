@@ -20,11 +20,15 @@ import redis
 import ast
 from time import time
 import pprint
+import logging
+
 
 BackendType = "redis"
 
 # setup pprint for debugging
 pp = pprint.PrettyPrinter(indent=4)
+# and setup the logger
+logger = logging.getLogger("ogslb")
 
 
 # the TimeSeries class is used to abstract how we deal with data
@@ -35,8 +39,15 @@ pp = pprint.PrettyPrinter(indent=4)
 # window of time
 class TimeSeries:
 
-   def __init__(self):
-      self._db = redis.Redis('localhost')
+   def __init__(self, Config):
+      host = ''
+      self._config = Config
+      try:
+         host = self._config['backend']['host']
+      except:
+         host = 'localhost'
+      logger.debug("host: %s" % host)
+      self._db = redis.Redis(host)
 
    def zput(self, key, value, when):
       self._db.zadd(key, value, when)
